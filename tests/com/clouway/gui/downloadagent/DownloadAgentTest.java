@@ -1,7 +1,6 @@
 package com.clouway.gui.downloadagent;
 
 import com.clouway.gui.downloadagent.downloader.URLAddressException;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -11,18 +10,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
-import sun.misc.IOUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 
 public class DownloadAgentTest {
 

@@ -56,8 +56,6 @@ public class MultiClientServer {
   public void stop() {
     isListening.set(false);
 
-    System.out.println("size: " + connections.size());
-
     if (server != null) {
       executor.execute(new Runnable() {
         @Override
