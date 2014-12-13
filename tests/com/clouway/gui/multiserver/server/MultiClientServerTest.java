@@ -40,8 +40,8 @@ public class MultiClientServerTest {
     private Executor executor;
     private BufferedReader in;
 
-    public FakeClient(Executor executor) {
-      this.executor = executor;
+    public FakeClient() {
+      this.executor = Executors.newFixedThreadPool(2);
     }
 
     public void connect(final String host, final Integer port) {
@@ -99,8 +99,8 @@ public class MultiClientServerTest {
   public void setUp() throws Exception {
     listener = context.mock(StatusListener.class);
     executor = new DeterministicExecutor();
-    server = new MultiClientServer(listener, Executors.newFixedThreadPool(3));
-    client = new FakeClient(executor);
+    server = new MultiClientServer(listener, Executors.newFixedThreadPool(3)); // Arbitrarily chosen 3
+    client = new FakeClient();
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -116,7 +116,6 @@ public class MultiClientServerTest {
     client.connect(localHost, port);
 
     client.assertThatHasReceivedFromServerOnConnect(EStates.CONNECTED.name());
-    executor.runUntilIdle();
     server.stop();
   }
 
@@ -131,17 +130,14 @@ public class MultiClientServerTest {
       when(status.is("connecting"));
       then(status.is("connected"));
       oneOf(listener).onStatusChanged(EStates.DISCONNECTED.name());
-      when(status.is("connected"));
       then(status.is("disconnected"));
     }});
 
     server.start(port);
     client.connect(localHost, port);
-    executor.runUntilIdle();  // Make client connect to server
     synchroniser.waitUntil(status.is("connected"));
     server.stop();  // Make server send Disconnected
     client.assertThatHasReceivedFromServerOnDisconnect(EStates.DISCONNECTED.name());
-    executor.runUntilIdle(); // Make Fake client assert received msg
     synchroniser.waitUntil(status.is("disconnected"));
   }
 
@@ -149,24 +145,23 @@ public class MultiClientServerTest {
 
   @Test
   public void twoConnectedClientsReceiveConnectedMsgFromServer() throws Exception {
-    final FakeClient client1 = new FakeClient(executor);
-    final FakeClient client2 = new FakeClient(executor);
+    final FakeClient client1 = new FakeClient();
+    final FakeClient client2 = new FakeClient();
+
+    final States states = context.states("connecting").startsAs("connecting");
 
     context.checking(new Expectations() {{
       exactly(2).of(listener).onStatusChanged(EStates.CONNECTED.name());
+      then(states.is("connected"));
       allowing(listener).onStatusChanged(with(any(String.class)));
     }});
 
     server.start(port);
     client1.connect(localHost, port);
-    executor.runPendingCommands();
     client2.connect(localHost, port);
-    executor.runPendingCommands();
-
+    synchroniser.waitUntil(states.is("connected"));
     client1.assertThatHasReceivedFromServerOnConnect(EStates.CONNECTED.name());
     client2.assertThatHasReceivedFromServerOnConnect(EStates.CONNECTED.name());
-    executor.runUntilIdle();
-
     server.stop();
   }
 
@@ -174,33 +169,25 @@ public class MultiClientServerTest {
 
   @Test
   public void twoDisconnectedClientsReceiveDisconnectMsgFromServer() throws Exception {
-    final FakeClient client1 = new FakeClient(executor);
-    final FakeClient client2 = new FakeClient(executor);
+    final FakeClient client1 = new FakeClient();
+    final FakeClient client2 = new FakeClient();
 
     final States status = context.states("connecting").startsAs("connecting");
 
     context.checking(new Expectations() {{
-      oneOf(listener).onStatusChanged(EStates.CONNECTED.name());
-      oneOf(listener).onStatusChanged(EStates.CONNECTED.name());
-      when(status.is("connecting"));
+      exactly(2).of(listener).onStatusChanged(EStates.CONNECTED.name());
       then(status.is("connected"));
-
-      oneOf(listener).onStatusChanged(EStates.DISCONNECTED.name());
-      oneOf(listener).onStatusChanged(EStates.DISCONNECTED.name());
-      when(status.is("connected"));
+      exactly(2).of(listener).onStatusChanged(EStates.DISCONNECTED.name());
       then(status.is("disconnected"));
     }});
 
     server.start(port);
     client1.connect(localHost, port);
     client2.connect(localHost, port);
-    executor.runPendingCommands(); // Make clients connect
     synchroniser.waitUntil(status.is("connected"));
-
     server.stop(); // Make server send respond with Disconnected msg
     client1.assertThatHasReceivedFromServerOnDisconnect(EStates.DISCONNECTED.name());
     client2.assertThatHasReceivedFromServerOnDisconnect(EStates.DISCONNECTED.name());
-    executor.runPendingCommands(); // Make fake client assert respond
     synchroniser.waitUntil(status.is("disconnected"));
   }
 
