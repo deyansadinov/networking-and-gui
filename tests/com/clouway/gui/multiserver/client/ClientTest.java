@@ -103,6 +103,7 @@ public class ClientTest {
     clientExecutor.runUntilIdle();
 
     server.stop();
+
   }
 
   // ------------------------------------------------------------------------------------------------------

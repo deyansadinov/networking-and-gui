@@ -11,6 +11,12 @@ public class EquationBuilder {
   private String lastSymbol = "";
   private boolean canEnterDot = true;
 
+  /**
+   * Appends a symbol if to the equation if the symbol can be appended at all.
+   *
+   * @param pendingSymbol is the desired symbol to be appended.
+   * @return this instance of the EquationBuilder.
+   */
   public EquationBuilder append(String pendingSymbol) {
 
     if (isOperation(pendingSymbol)) {
@@ -24,16 +30,30 @@ public class EquationBuilder {
     return this;
   }
 
+  /**
+   * Deletes the existing equation and guarantees you a fresh start.
+   */
   public void clear() {
     equation = new StringBuilder();
     lastSymbol = "";
     canEnterDot = true;
   }
 
+  /**
+   * Gets the current content of the equation. It might not be a correct equation
+   * For example it might return: 1+2*
+   *
+   * @return the current content of the equation
+   */
   public String content() {
     return equation.toString();
   }
 
+  /**
+   * Checks if the content of the equation is correct and returns it. If not it returns a empty string "".
+   *
+   * @return a correct equation or empty string "" if equation not complete.
+   */
   public String build() {
     if (isDot(lastSymbol) || isOperation(lastSymbol)) {
       return "";

@@ -12,27 +12,11 @@ import java.awt.event.ActionListener;
  */
 public class CalculatorUI extends JFrame {
 
-  private JTextField equationField;
-  private JTextField resultField;
   private JPanel calculatorPanel;
-  private JButton btnOne;
-  private JButton btnTwo;
-  private JButton btnThree;
-  private JButton btnFour;
-  private JButton btnEight;
-  private JButton btnSix;
-  private JButton btnSeven;
-  private JButton btnFive;
-  private JButton btnZero;
-  private JButton btnNine;
-  private JButton btnEquals;
-  private JButton btnClear;
-  private JButton btnPlus;
-  private JButton btnMinus;
-  private JButton btnMultiply;
-  private JButton btnDivide;
-  private JButton btnPowerOfTwo;
-  private JButton btnDot;
+  private JTextField equationField,resultField;
+  private JButton btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine, btnZero;
+  private JButton btnMinus, btnPlus, btnMultiply, btnDivide, btnPowerOf, btnDot;
+  private JButton btnEquals, btnClear;
 
   private final CalculationAlgorithm calcAlgorithm;
   private final EquationBuilder equationBuilder;
@@ -52,8 +36,8 @@ public class CalculatorUI extends JFrame {
 
   private void setActionListenerToButtons() {
 
-    JButton[] jButtons = {btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine,
-            btnDot, btnPlus, btnMinus, btnMultiply, btnDivide, btnPowerOfTwo};
+    JButton[] equationButtons = {btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine,
+            btnDot, btnPlus, btnMinus, btnMultiply, btnDivide, btnPowerOf};
 
     ActionListener equationListener = new ActionListener() {
       @Override
@@ -65,11 +49,11 @@ public class CalculatorUI extends JFrame {
       }
     };
 
-    ActionListener calculationListener = new ActionListener() {
+    ActionListener calculateListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         String equation = equationBuilder.build();
-        if("".equals(equation)){
+        if ("".equals(equation)) {
           return;
         }
         double result = calcAlgorithm.calculate(equation);
@@ -86,19 +70,17 @@ public class CalculatorUI extends JFrame {
       }
     };
 
-    for (JButton each : jButtons) {
+    for (JButton each : equationButtons) {
       each.addActionListener(equationListener);
     }
     btnClear.addActionListener(clearListener);
-    btnEquals.addActionListener(calculationListener);
+    btnEquals.addActionListener(calculateListener);
   }
 
   public static void main(String[] args) {
     CalculationAlgorithm rpn = new RPN();
     EquationBuilder eBuilder = new EquationBuilder();
-    new CalculatorUI(rpn,eBuilder);
+    new CalculatorUI(rpn, eBuilder);
   }
-
-
 
 }
