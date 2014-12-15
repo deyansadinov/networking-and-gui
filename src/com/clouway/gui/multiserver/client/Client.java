@@ -14,21 +14,7 @@ public class Client {
   private final IStatusListener listener;
   private final Executor executor;
 
-  private class StateHandler {
-
-    private final String state;
-    private final IStatusListener listener;
-
-    public StateHandler(String state, IStatusListener listener) {
-      this.state = state;
-      this.listener = listener;
-    }
-
-
-  }
-
   public Client(IStatusListener listener, Executor executor) {
-
     this.listener = listener;
     this.executor = executor;
   }
