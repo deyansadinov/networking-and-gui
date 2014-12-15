@@ -14,16 +14,16 @@ import java.util.concurrent.Executors;
  * Created by clouway on 14-12-10.
  */
 public class ServerUI extends JFrame implements ActionListener, StatusListener {
-  private final int port;
+  private int port;
   private JTextArea textAreaStatus;
   private JButton btnStart;
   private JButton btnStop;
   private JPanel serverUI;
+  private JTextField portField;
 
   private MultiClientServer server;
 
-  public ServerUI(int port) {
-    this.port = port;
+  public ServerUI() {
     createUIComponents();
     btnStart.addActionListener(this);
     btnStop.addActionListener(this);
@@ -41,10 +41,13 @@ public class ServerUI extends JFrame implements ActionListener, StatusListener {
     if (e.getSource() == btnStart) {
       server = new MultiClientServer(this, Executors.newFixedThreadPool(3));
       try {
-        server.start(port);
+        server.start(Integer.parseInt(portField.getText()));
         btnStart.setEnabled(false);
         btnStop.setEnabled(true);
+        portField.setEnabled(false);
         textAreaStatus.setText("");
+      } catch (NumberFormatException ne) {
+        JOptionPane.showMessageDialog(this, "Incorrect port");
       } catch (IOException e1) {
         e1.printStackTrace();
       }
@@ -54,6 +57,7 @@ public class ServerUI extends JFrame implements ActionListener, StatusListener {
       server.stop();
       btnStart.setEnabled(true);
       btnStop.setEnabled(false);
+      portField.setEnabled(true);
     }
 
   }
@@ -70,7 +74,7 @@ public class ServerUI extends JFrame implements ActionListener, StatusListener {
   }
 
   public static void main(String[] args) {
-    new ServerUI(4444);
+    new ServerUI();
   }
 
 
