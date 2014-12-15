@@ -1,5 +1,7 @@
 package com.clouway.gui.multiserver.client;
 
+import com.clouway.gui.multiserver.server.StatusListener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,10 +13,11 @@ import java.util.concurrent.Executor;
  */
 public class Client {
 
-  private final IStatusListener listener;
+  private final StatusListener listener;
   private final Executor executor;
+  private boolean isListening;
 
-  public Client(IStatusListener listener, Executor executor) {
+  public Client(StatusListener listener, Executor executor) {
     this.listener = listener;
     this.executor = executor;
   }
@@ -26,13 +29,16 @@ public class Client {
   }
 
   public void startListening() {
+    isListening = true;
     executor.execute(new Runnable() {
       @Override
       public void run() {
         if (socket != null) {
           try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            handle(in.readLine());
+            while (isListening) {
+              handle(in.readLine());
+            }
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -44,6 +50,7 @@ public class Client {
   private void handle(String state) {
     listener.onStatusChanged(state);
     if ("Disconnected".equals(state)) {
+      isListening = false;
       try {
         socket.close();
       } catch (IOException e) {

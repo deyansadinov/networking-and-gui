@@ -1,5 +1,6 @@
 package com.clouway.gui.multiserver.client;
 
+import com.clouway.gui.multiserver.server.StatusListener;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.lib.concurrent.DeterministicExecutor;
@@ -84,7 +85,7 @@ public class ClientTest {
 
   @Test
   public void clientReceivesConnectedMessageFromSerer() throws Exception {
-    final IStatusListener listener = context.mock(IStatusListener.class);
+    final StatusListener listener = context.mock(StatusListener.class);
     final DeterministicExecutor clientExecutor = new DeterministicExecutor();
 
     context.checking(new Expectations() {{
@@ -107,7 +108,7 @@ public class ClientTest {
 
   @Test
   public void clientReceivesDisconnectedMessageFromServer() throws Exception {
-    final IStatusListener listener = context.mock(IStatusListener.class);
+    final StatusListener listener = context.mock(StatusListener.class);
     final DeterministicExecutor clientExecutor = new DeterministicExecutor();
 
     context.checking(new Expectations() {{

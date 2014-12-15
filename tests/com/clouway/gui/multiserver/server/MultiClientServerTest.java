@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 public class MultiClientServerTest {
 
-  final private Integer port = 4444;
+  final private Integer port = 5555;
   final private String localHost = "127.0.0.1";
   final private Synchroniser synchroniser = new Synchroniser();
 
