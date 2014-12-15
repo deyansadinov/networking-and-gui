@@ -48,7 +48,7 @@ public class ClientUI extends JFrame implements ActionListener, StatusListener {
 
     connectBtn = new JButton("Connect");
 
-    currentStateField = new JTextField("Disconnected", 15);
+    currentStateField = new JTextField(EStates.DISCONNECTED.name(), 15);
     portField = new JTextField("4444", 4);
     ipField = new JTextField("127.0.0.1", 10);
 
@@ -72,7 +72,6 @@ public class ClientUI extends JFrame implements ActionListener, StatusListener {
     this.add(mainPanel);
   }
 
-
   @Override
   public void actionPerformed(ActionEvent e) {
     connectBtn.setEnabled(false);
@@ -81,9 +80,11 @@ public class ClientUI extends JFrame implements ActionListener, StatusListener {
       client.connect(ipField.getText(), Integer.parseInt(portField.getText()));
       client.startListening();
     } catch (NumberFormatException nfe) {
-      nfe.printStackTrace();
+      JOptionPane.showMessageDialog(this, "Incorrect port");
+      connectBtn.setEnabled(true);
     } catch (IOException ioe) {
-      ioe.printStackTrace();
+      JOptionPane.showMessageDialog(this, "Server is offline");
+      connectBtn.setEnabled(true);
     }
   }
 

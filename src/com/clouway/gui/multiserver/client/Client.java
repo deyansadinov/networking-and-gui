@@ -49,7 +49,7 @@ public class Client {
 
   private void handle(String state) {
     listener.onStatusChanged(state);
-    if ("Disconnected".equals(state)) {
+    if (EStates.DISCONNECTED.name().equals(state)) {
       isListening = false;
       try {
         socket.close();

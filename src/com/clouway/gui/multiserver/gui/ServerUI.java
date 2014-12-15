@@ -44,6 +44,7 @@ public class ServerUI extends JFrame implements ActionListener, StatusListener {
         server.start(port);
         btnStart.setEnabled(false);
         btnStop.setEnabled(true);
+        textAreaStatus.setText("");
       } catch (IOException e1) {
         e1.printStackTrace();
       }
