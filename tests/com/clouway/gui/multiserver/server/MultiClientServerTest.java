@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.BindException;
 import java.net.Socket;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -31,6 +32,7 @@ public class MultiClientServerTest {
   private StatusListener listener;
   private DeterministicExecutor executor;
   private FakeClient client;
+  private States status;
 
   // ===================================================================================================================
 
@@ -63,6 +65,13 @@ public class MultiClientServerTest {
         @Override
         public void run() {
           try {
+            while (in == null){
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
+            }
             assertThat(in.readLine(), is(equalTo(status)));
           } catch (IOException e) {
             fail("Fake client couldn't get InputStream");
@@ -76,6 +85,13 @@ public class MultiClientServerTest {
         @Override
         public void run() {
           try {
+            while (in == null){
+              try {
+                Thread.sleep(10);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              }
+            }
             in.readLine(); // Clear msg from on connect
             assertThat(in.readLine(), is(equalTo(status)));
           } catch (IOException e) {
@@ -101,6 +117,7 @@ public class MultiClientServerTest {
     executor = new DeterministicExecutor();
     server = new MultiClientServer(listener, Executors.newFixedThreadPool(3)); // Arbitrarily chosen 3
     client = new FakeClient();
+    status = context.states("connecting").startsAs("connecting");
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -109,12 +126,14 @@ public class MultiClientServerTest {
   public void serverSendsConnectedMsgOnConnect() throws Exception {
     context.checking(new Expectations() {{
       oneOf(listener).onStatusChanged(EStates.CONNECTED.name());
+      when(status.is("connecting"));
+      then(status.is("connected"));
       allowing(listener).onStatusChanged(with(any(String.class)));
     }});
 
     server.start(port);
     client.connect(localHost, port);
-
+    synchroniser.waitUntil(status.is("connected"));
     client.assertThatHasReceivedFromServerOnConnect(EStates.CONNECTED.name());
     server.stop();
   }
@@ -123,8 +142,6 @@ public class MultiClientServerTest {
 
   @Test
   public void notifyUserThatHeIsDisconnectedWhenServerStops() throws Exception {
-    final States status = context.states("connecting").startsAs("connecting");
-
     context.checking(new Expectations() {{
       allowing(listener).onStatusChanged(with(any(String.class)));
       when(status.is("connecting"));
@@ -148,18 +165,16 @@ public class MultiClientServerTest {
     final FakeClient client1 = new FakeClient();
     final FakeClient client2 = new FakeClient();
 
-    final States states = context.states("connecting").startsAs("connecting");
-
     context.checking(new Expectations() {{
       exactly(2).of(listener).onStatusChanged(EStates.CONNECTED.name());
-      then(states.is("connected"));
+      then(status.is("connected"));
       allowing(listener).onStatusChanged(with(any(String.class)));
     }});
 
     server.start(port);
     client1.connect(localHost, port);
     client2.connect(localHost, port);
-    synchroniser.waitUntil(states.is("connected"));
+    synchroniser.waitUntil(status.is("connected"));
     client1.assertThatHasReceivedFromServerOnConnect(EStates.CONNECTED.name());
     client2.assertThatHasReceivedFromServerOnConnect(EStates.CONNECTED.name());
     server.stop();
@@ -171,8 +186,6 @@ public class MultiClientServerTest {
   public void twoDisconnectedClientsReceiveDisconnectMsgFromServer() throws Exception {
     final FakeClient client1 = new FakeClient();
     final FakeClient client2 = new FakeClient();
-
-    final States status = context.states("connecting").startsAs("connecting");
 
     context.checking(new Expectations() {{
       exactly(2).of(listener).onStatusChanged(EStates.CONNECTED.name());
@@ -192,17 +205,16 @@ public class MultiClientServerTest {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
+  
+  @Test(expected = BindException.class)
+  public void throwingExceptionWhenStartingTwiceOnSamePort() throws Exception {
+    final MultiClientServer server1 = new MultiClientServer(null,Executors.newFixedThreadPool(2));
+    final MultiClientServer server2 = new MultiClientServer(null,Executors.newFixedThreadPool(2));
+    server1.start(port);
+    server2.start(port);
 
-//  @Test(expected = BindException.class)
-//  public void preventServerFromStartingTwice() throws Exception {
-//  }
-
-//  @Test
-//  public void statusListenerCalledOnConnecting() throws Exception {
-//  }
-
-//  @Test(expected = BindException.class)
-//  public void dontStartServerOnSamePortTwice() throws Exception {
-//  }
+    server1.stop();
+    server2.stop();
+  }
 
 }

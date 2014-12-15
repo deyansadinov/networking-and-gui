@@ -60,19 +60,21 @@ public class MultiClientServer {
       executor.execute(new Runnable() {
         @Override
         public void run() {
-          try {
-            Iterator<Socket> iterator = connections.iterator();
-            while (iterator.hasNext()){
-              Socket each = iterator.next();
-              PrintWriter out = new PrintWriter(new BufferedOutputStream(each.getOutputStream()));
-              out.println(EStates.DISCONNECTED.name());
-              out.close();
-              each.close();
-              listener.onStatusChanged(EStates.DISCONNECTED.name());
+          synchronized (connections) {
+            try {
+              Iterator<Socket> iterator = connections.iterator();
+              while (iterator.hasNext()) {
+                Socket each = iterator.next();
+                PrintWriter out = new PrintWriter(new BufferedOutputStream(each.getOutputStream()));
+                out.println(EStates.DISCONNECTED.name());
+                out.close();
+                each.close();
+                listener.onStatusChanged(EStates.DISCONNECTED.name());
+              }
+              server.close();
+            } catch (IOException e) {
+              e.printStackTrace();
             }
-            server.close();
-          } catch (IOException e) {
-            e.printStackTrace();
           }
         }
       });
