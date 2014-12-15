@@ -22,16 +22,17 @@ public class Client {
   }
 
   public void start() {
+    StringBuilder messageBuilder = new StringBuilder();
     try {
+
       Socket socket = new Socket(address, port);
       BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
-      BufferedOutputStream outputStream = new BufferedOutputStream(socket.getOutputStream());
 
       int bytes;
       while ((bytes = inputStream.read()) != -1) {
-        System.out.println(bytes);
+        messageBuilder.append((char) bytes);
       }
-
+      message = messageBuilder.toString();
     } catch (IOException e) {
       e.printStackTrace();
     }
