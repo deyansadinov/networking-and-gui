@@ -1,6 +1,6 @@
-package com.clouway.gui.multiserver.client;
+package com.clouway.gui.comunication.client;
 
-import com.clouway.gui.multiserver.server.StatusListener;
+import com.clouway.gui.comunication.server.StatusListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;

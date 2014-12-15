@@ -1,8 +1,8 @@
-package com.clouway.gui.multiserver.gui;
+package com.clouway.gui.comunication.gui;
 
 
-import com.clouway.gui.multiserver.server.MultiClientServer;
-import com.clouway.gui.multiserver.server.StatusListener;
+import com.clouway.gui.comunication.server.MultiClientServer;
+import com.clouway.gui.comunication.server.StatusListener;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

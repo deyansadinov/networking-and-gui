@@ -1,4 +1,4 @@
-package com.clouway.gui.multiserver.server;
+package com.clouway.gui.comunication.server;
 
 /**
  * Created by clouway on 14-12-9.

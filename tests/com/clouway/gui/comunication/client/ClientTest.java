@@ -1,6 +1,6 @@
-package com.clouway.gui.multiserver.client;
+package com.clouway.gui.comunication.client;
 
-import com.clouway.gui.multiserver.server.StatusListener;
+import com.clouway.gui.comunication.server.StatusListener;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.lib.concurrent.DeterministicExecutor;

@@ -1,6 +1,6 @@
-package com.clouway.gui.multiserver.server;
+package com.clouway.gui.comunication.server;
 
-import com.clouway.gui.multiserver.client.EStates;
+import com.clouway.gui.comunication.client.EStates;
 import org.jmock.Expectations;
 import org.jmock.States;
 import org.jmock.integration.junit4.JUnitRuleMockery;
