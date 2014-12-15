@@ -1,0 +1,61 @@
+Data is transmitted across the Internet in packets of finite size called datagrams. Each
+datagram contains a header and a payload. The header contains the address and port to
+which the packet is going, the address and port from which the packet came, a checksum
+to detect data corruption, and various other housekeeping information used to ensure
+reliable transmission. The payload contains the data itself. However, because datagrams
+have a finite length, it’s often necessary to split the data across multiple packets and
+reassemble it at the destination. It’s also possible that one or more packets may be lost
+or corrupted in transit and need to be retransmitted or that packets arrive out of order
+and need to be reordered. Keeping track of this—splitting the data into packets, gen‐
+erating headers, parsing the headers of incoming packets, keeping track of what packets
+have and haven’t been received, and so on—is a lot of work and requires a lot of intricate
+code.
+Fortunately, you don’t have to do the work yourself. Sockets allow the programmer to
+treat a network connection as just another stream onto which bytes can be written and
+from which bytes can be read. Sockets shield the programmer from low-level details of
+the network, such as error detection, packet sizes, packet splitting, packet retransmis‐
+sion, network addresses, and more.
+Using Sockets
+A socket is a connection between two hosts. It can perform seven basic operations:
+• Connect to a remote machine
+• Send data
+• Receive data
+• Close a connection
+• Bind to a port
+237
+www.it-ebooks.info• Listen for incoming data
+• Accept connections from remote machines on the bound port
+Java’s Socket class, which is used by both clients and servers, has methods that corre‐
+spond to the first four of these operations. The last three operations are needed only by
+servers, which wait for clients to connect to them. They are implemented by the
+ServerSocket class, which is discussed in the next chapter. Java programs normally use
+client sockets in the following fashion:
+• The program creates a new socket with a constructor.
+• The socket attempts to connect to the remote host.
+Once the connection is established, the local and remote hosts get input and output
+streams from the socket and use those streams to send data to each other. This con‐
+nection is full-duplex. Both hosts can send and receive data simultaneously. What the
+data means depends on the protocol; different commands are sent to an FTP server than
+to an HTTP server. There will normally be some agreed-upon handshaking followed
+by the transmission of data from one to the other.
+When the transmission of data is complete, one or both sides close the connection. Some
+protocols, such as HTTP 1.0, require the connection to be closed after each request is
+serviced. Others, such as FTP and HTTP 1.1, allow multiple requests to be processed
+in a single connection.
+Investigating Protocols with Telnet
+In this chapter, you’ll see clients that use sockets to communicate with a number of well-
+known Internet services such as time, dict, and more. The sockets themselves are simple
+enough; however, the protocols to communicate with different servers make life com‐
+plex.
+To get a feel for how a protocol operates, you can use Telnet to connect to a server, type
+different commands to it, and watch its responses. By default, Telnet attempts to connect
+to port 23. To connect to servers on different ports, specify the port you want to connect
+to like this:
+$ telnet localhost 25
+This requests a connection to port 25, the SMTP port, on the local machine; SMTP is
+the protocol used to transfer email between servers or between a mail client and a server.
+If you know the commands to interact with an SMTP server, you can send email without
+going through a mail program. This trick can be used to forge email. For example, some
+years ago, the summer students at the National Solar Observatory in Sunspot, New
+Mexico, made it appear that the party one of the scientists was throwing after the annual
+volleyball match between the staff and the students was in fact a victory party for the
