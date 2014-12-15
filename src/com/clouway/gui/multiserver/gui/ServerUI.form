@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.clouway.multiserver.gui.ServerUI">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.clouway.gui.multiserver.gui.ServerUI">
   <grid id="27dc6" binding="serverUI" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="15" left="15" bottom="15" right="15"/>
     <constraints>
@@ -14,7 +14,9 @@
             <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <editable value="false"/>
+        </properties>
       </component>
       <component id="75c99" class="javax.swing.JButton" binding="btnStart">
         <constraints>

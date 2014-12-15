@@ -33,6 +33,7 @@ public class MultiClientServer {
     isListening = new AtomicBoolean(true);
     connections = new Vector<Socket>();
     server = new ServerSocket(port);
+    listener.onStatusChanged(EStates.RUNNING.name());
     executor.execute(new Runnable() {
       @Override
       public void run() {
@@ -72,6 +73,7 @@ public class MultiClientServer {
                 listener.onStatusChanged(EStates.DISCONNECTED.name());
               }
               server.close();
+              listener.onStatusChanged(EStates.SHUT_DOWN.name());
             } catch (IOException e) {
               e.printStackTrace();
             }

@@ -5,7 +5,6 @@ package com.clouway.gui.multiserver.client;
  */
 public enum EStates {
 
-  CONNECTED, DISCONNECTED;
-
+  CONNECTED, DISCONNECTED, RUNNING, SHUT_DOWN;
 
 }
