@@ -205,7 +205,7 @@ public class MultiClientServerTest {
   }
 
   // -------------------------------------------------------------------------------------------------------------------
-  
+
   @Test(expected = BindException.class)
   public void throwingExceptionWhenStartingTwiceOnSamePort() throws Exception {
     final MultiClientServer server1 = new MultiClientServer(null,Executors.newFixedThreadPool(2));

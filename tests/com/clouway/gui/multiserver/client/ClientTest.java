@@ -28,8 +28,8 @@ public class ClientTest {
     private ServerSocket server;
     private Socket client;
 
-    public FakeServer(Executor executor) {
-      this.executor = executor;
+    public FakeServer() {
+      executor = Executors.newFixedThreadPool(2);
     }
 
     public void start(int port) throws IOException {
@@ -80,12 +80,10 @@ public class ClientTest {
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery();
 
-
   // ------------------------------------------------------------------------------------------------------
 
   @Test
   public void clientReceivesConnectedMessageFromSerer() throws Exception {
-
     final IStatusListener listener = context.mock(IStatusListener.class);
     final DeterministicExecutor clientExecutor = new DeterministicExecutor();
 
@@ -93,7 +91,7 @@ public class ClientTest {
       oneOf(listener).onStatusChanged(EStates.CONNECTED.name());
     }});
 
-    FakeServer server = new FakeServer(Executors.newFixedThreadPool(2));
+    FakeServer server = new FakeServer();
     server.start(port);
     server.respond(EStates.CONNECTED.name());
 
@@ -103,7 +101,6 @@ public class ClientTest {
     clientExecutor.runUntilIdle();
 
     server.stop();
-
   }
 
   // ------------------------------------------------------------------------------------------------------
@@ -117,7 +114,7 @@ public class ClientTest {
       oneOf(listener).onStatusChanged(EStates.DISCONNECTED.name());
     }});
 
-    FakeServer server = new FakeServer(Executors.newFixedThreadPool(2));
+    FakeServer server = new FakeServer();
     server.start(port);
     server.respond(EStates.DISCONNECTED.name());
 
