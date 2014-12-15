@@ -1,11 +1,8 @@
 package com.clouway.threads.task2;
 
-import com.clouway.threads.task1.*;
 import org.junit.Test;
 
 import java.util.Scanner;
-
-import static org.junit.Assert.*;
 
 public class ThreadCounterTest {
   @Test
@@ -17,6 +14,7 @@ public class ThreadCounterTest {
 
       Scanner scanner=new Scanner(System.in);
       String text="";
+
       text+=scanner.next();
       if(!text.equals("")){
         thread.interrupt();
