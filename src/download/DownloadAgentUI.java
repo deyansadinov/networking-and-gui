@@ -100,19 +100,6 @@ public class DownloadAgentUI extends JFrame implements ProgressListener {
 
   }
 
-//    void updateProgress(final int newValue){
-//    progressBar.setValue(newValue);
-//  }
-//
-//  public void setValuee(final int progressBar){
-//    SwingUtilities.invokeLater(new Runnable() {
-//      @Override
-//      public void run() {
-//        updateProgress(progressBar);
-//      }
-//    });
-//  }
-
 
   @Override
   public void onProgressWasUpdate(int savedBytes) {

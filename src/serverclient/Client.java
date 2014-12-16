@@ -14,7 +14,7 @@ public class Client {
   private final int port;
   private StringBuilder builder = new StringBuilder();
   private Socket clientSocket;
-  private PrintWriter writer;
+
 
 
   public Client(ClientMessageListener clientMessageListener, UserMessage userMessage, int port) {
@@ -66,16 +66,4 @@ public class Client {
     return builder.toString();
   }
 
-  public void disconnect() {
-//    if (clientSocket != null){
-    try {
-      writer = new PrintWriter(String.valueOf(new BufferedInputStream(clientSocket.getInputStream())));
-      writer.println("\nClient Disconnected\n");
-      writer.flush();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-//    }
-  }
 }

@@ -4,6 +4,7 @@ package clientsever;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 
+import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,9 @@ public class ClientTest {
   private MockClientMessageListener clientMessageListener;
 
 
-  public JUnitRuleMockery context = new JUnitRuleMockery();
+  public JUnitRuleMockery context = new JUnitRuleMockery(){{
+    setThreadingPolicy(new Synchroniser());
+  }};
   final UserMessage userMessage = context.mock(UserMessage.class);
 
   @Before
@@ -39,7 +42,7 @@ public class ClientTest {
 
 
   @Test
-  public void clientReceiveWhatWasSendFromServer() {
+  public void clientReceiveWhatWasSendFromServer() throws InterruptedException {
 
     context.checking(new Expectations() {{
       ignoring(userMessage);
@@ -54,11 +57,15 @@ public class ClientTest {
 
     client.connect("localhost");
 
+    Thread.sleep(10);
+
     String response = client.getResponse();
 
     assertThat(response, is("Hello 2014-12-15"));
 
-    client.disconnect();
+    fakeServer.stop();
+
+//    client.disconnect();
   }
 
   @Test
@@ -79,23 +86,8 @@ public class ClientTest {
     client.connect("localhost");
 
     assertThat(clientMessageListener.listMessage, hasItems("Client is connected to Server on 4444 port"));
+
+    fakeServer.stop();
   }
 
-//  @Test
-//  public void serverDisconnected() {
-//
-//
-//    context.checking(new Expectations() {{
-//
-//    }});
-//
-//    new Thread(new Runnable() {
-//      @Override
-//      public void run() {
-//        fakeServer.startServer();
-//      }
-//    }).start();
-//
-//    client.connect("localhost");
-//  }
 }

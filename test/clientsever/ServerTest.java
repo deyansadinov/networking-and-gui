@@ -1,21 +1,25 @@
 package clientsever;
 
 import org.jmock.Expectations;
+
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import serverclient.Clock;
 import serverclient.Server;
 import serverclient.ServerMessage;
 
 
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.Date;
 import java.util.Scanner;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
@@ -34,7 +38,7 @@ public class ServerTest {
       return calendar.date(2014, 12, 15);
     }
   };
-
+  @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setThreadingPolicy(new Synchroniser());
   }};
@@ -72,6 +76,35 @@ public class ServerTest {
 
     server.stopServer();
 
+  }
+
+  @Test
+  public void newClientWasConnected() throws IOException {
+
+    context.checking(new Expectations(){{
+      oneOf(serverMessage).startServer();
+      will(returnValue("Server starting on port 4444 and listener for required"));
+
+      oneOf(serverMessage).acceptServer();
+      will(returnValue("Server accept new client"));
+
+      oneOf(serverMessage).sayHello();
+
+      oneOf(serverMessage).sendMessage();
+      will(returnValue("Server send message to client"));
+    }
+    });
+
+    server.startServer();
+
+    Socket clientSocket = new Socket("localhost",4444);
+
+    assertThat(serverMessageListener.listMessages,hasItems("Server starting on port 4444 and listener for required","Server accept new client"
+            ,"Server send message to client"));
+
+    clientSocket.close();
+
+    server.stopServer();
   }
 
   private String getContent(Socket clientSocket) throws IOException {

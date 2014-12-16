@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
  */
 public class CalculatorUI extends JFrame implements Display {
 
-//  private Calculator calculator;
+
   private String currentDisplay="";
   private JTextField jTextField;
   private JPanel contentPanel;
@@ -66,41 +66,6 @@ public class CalculatorUI extends JFrame implements Display {
         }else {
           calculatorListener.onOperationPressed(String.valueOf(text));
         }
-//        if (isDigit(text.toString())) {
-//          //Logikata za chislo
-//          calculator.onNumberPressed(String.valueOf(text));
-//        }
-//        if (text.equals("=")) {
-//          //Logikata za ravno
-//        }
-//
-//        if (text.equals("<")) {
-//          //Logikata za triene
-//        }
-//        switch (text) {
-//          case '-':
-////            if (Character.isDigit(text)) {
-//              calculator.onNumberPressed(String.valueOf((text)));break;
-////            }
-//          case '2':
-//            if (Character.isLetter(text)){
-//              calculator.onDeletePressed();break;
-//            }
-//          case '3':
-//            if (text.equals('<')){
-//              calculator.onBackspacePressed();break;
-//            }
-//          case '4':
-////            if (text.equals('=')){
-//              calculator.onEvaluate();break;
-////            }
-//          case '5':
-////            if (text.equals('.')){
-//              calculator.onPointPressed();break;
-////            }
-//          case '6':
-//            calculator.onOperationPressed(String.valueOf(text));break;
-//        }
       }
 
     };
@@ -115,8 +80,5 @@ public class CalculatorUI extends JFrame implements Display {
     jTextField.setText(currentDisplay);
   }
 
-//  @Override
-//  public String getText() {
-//    return jTextField.getText();
-//  }
+
 }

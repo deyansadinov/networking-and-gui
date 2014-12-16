@@ -16,7 +16,6 @@ public class Calculator implements CalculatorListener {
   private final Map<String, String> operators;
 
 
-  private boolean lastCharacterOperation = false;
   private boolean pointFlag = false;
 
   public Calculator(Display display, Map<String, String> operators) {
@@ -29,20 +28,16 @@ public class Calculator implements CalculatorListener {
   @Override
   public void onNumberPressed(Integer symbol) {
 
-    lastCharacterOperation = false;
-
     currentDisplay += symbol;
     display.displayText(currentDisplay);
   }
 
   @Override
   public void onOperationPressed(String operation) {
-
     if (!operators.containsKey(operation)) {
       return;
     }
     if (!isOperation(currentDisplay)) {
-      lastCharacterOperation = false;
     }
 
     if (currentDisplay.endsWith(".")) {
@@ -56,13 +51,11 @@ public class Calculator implements CalculatorListener {
     }
 
 
-//    if (!lastCharacterOperation) {
-//      lastCharacterOperation = true;
-//      pointFlag = false;
+
 
     currentDisplay += operation;
     display.displayText(currentDisplay);
-//    }
+
 
 
   }
@@ -79,16 +72,10 @@ public class Calculator implements CalculatorListener {
     } catch (ScriptException e) {
       e.printStackTrace();
     }
-//    if (result != null) {
-//      display.displayText(result.toString());
-//    }
-////    display.getText();
-//    getCurrentDisplay();
   }
 
   @Override
   public void onDeletePressed() {
-    lastCharacterOperation = false;
     pointFlag = false;
     currentDisplay = "";
     display.displayText(currentDisplay);
@@ -100,12 +87,7 @@ public class Calculator implements CalculatorListener {
     if (currentDisplay.equals("")) {
       return;
     }
-//    String lastSymbol = expression.substring(expression.length() - 1);
-//    if (isOperation(lastSymbol)) {
-//      pointFlag = true;
-//      lastCharacterOperation = false;
-//    }
-//    display.displayText(expression.substring(0, expression.length() - 1));
+
     String[] exp = currentDisplay.split("");
     exp[exp.length - 1] = "";
     currentDisplay = "";
@@ -113,7 +95,6 @@ public class Calculator implements CalculatorListener {
       currentDisplay += x;
       if (!isOperation(currentDisplay)) {
         pointFlag = true;
-        lastCharacterOperation = false;
       }
     }
     display.displayText(currentDisplay);

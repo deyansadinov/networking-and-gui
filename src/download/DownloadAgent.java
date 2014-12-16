@@ -14,17 +14,15 @@ import java.net.URLConnection;
  */
 public class DownloadAgent {
 
-  private DownloadAgentUI downloadAgentUI;
+
   private ProgressListener progressListener;
 
   private int downloadedBytes;
 
   private long fileSize;
 
-  private int byteCounter = 0;
+
   private byte[] buff = new byte[1024];
-  private int readBytes;
-  private int availableBytes = 0;
   private boolean interrupted = false;
 
   public void isInterrupted(boolean interrupted) {
@@ -52,7 +50,7 @@ public class DownloadAgent {
 
       URL address = new URI(pageAddress).toURL();
       URLConnection connection = address.openConnection();
-//     connection.connect();
+
 
 
 
@@ -66,14 +64,13 @@ public class DownloadAgent {
       fileSize = connection.getContentLengthLong();
       downloadedBytes = transfer(inputStream, outputStream, -1, 0);
 
-//        transfer(inputStream, outputStream, -1, 0);
+
 
 
     } catch (MalformedURLException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
-//    }
     } finally {
       if (reader != null) {
         try {
@@ -120,6 +117,7 @@ public class DownloadAgent {
 
 
         System.out.println(downloadedBytes);
+        int readBytes;
         if ((readBytes = in.read(buff, 0, buff.length)) != -1) {
           out.write(buff, 0, readBytes);
           System.out.println("percents : " + calculatePercentTransferred(downloadedBytes));
@@ -138,85 +136,12 @@ public class DownloadAgent {
       }
       break;
     }
-
-
-//    if (numberOfBytes == -1) {
-//      while ((readBytes = in.read(buff)) != -1) {
-//        out.write(buff, 0, readBytes);
-//        byteCounter += readBytes;
-//
-//        System.out.println(byteCounter);
-//        progressListener.onProgressWasUpdate(calculatePercentTransferred(byteCounter));
-////        sleepAWhile();
-//        try {
-//          Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//          break;
-//        }
-//      }
-////      return byteCounter;
-//    }
-//
-////    if (buff.length >= numberOfBytes) {
-////      in.read(buff, 0, numberOfBytes);
-////      out.write(buff, 0, numberOfBytes);
-////      return numberOfBytes;
-////    }
-////
-////    while ((readBytes = in.read(buff)) != -1) {
-////      if (numberOfBytes > 0 && ((readBytes = in.read(buff, 0, buff.length)) != -1)) {
-////        byteCounter += readBytes;
-////        out.write(buff, 0, readBytes);
-////      }
-////      if (readBytes + byteCounter > numberOfBytes) {
-////        availableBytes = numberOfBytes - byteCounter;
-////        byteCounter += availableBytes;
-////      }
-////      in.read(buff, 0, readBytes);
-////      out.write(buff, 0, availableBytes);
-////      if (numberOfBytes == byteCounter) {
-////        return numberOfBytes;
-////      }
-////    }
-////    return numberOfBytes;
     return downloadedBytes;
   }
-
-
 
 
   private int calculatePercentTransferred(int bytesTransferred) {
     return (int) (100 * bytesTransferred / fileSize);
   }
 
-
-
-
-//  private int transffer(InputStream inputStream, OutputStream outputStream, int numberOfBytes, int offset) throws IOException {
-//
-//    BufferedInputStream inputBuff = new BufferedInputStream(inputStream);
-//
-//    if (offset < 0 && numberOfBytes < -1) {
-//      throw new IllegalArgumentException();
-//    }
-//
-//    inputBuff.skip(offset);
-//    byte[] buff = new byte[1024];
-//
-//    if (numberOfBytes < buff.length && numberOfBytes != -1) {
-//      inputBuff.read(buff, 0, numberOfBytes);
-//      outputStream.write(buff, 0, numberOfBytes);
-//      return numberOfBytes;
-//    }
-//
-//    while (transferredBytes < numberOfBytes || numberOfBytes == -1) {
-//      if ((readBytes = inputBuff.read(buff, 0, buff.length)) != -1) {
-//        outputStream.write(buff, 0, readBytes);
-//        transferredBytes += readBytes;
-//      } else {
-//        inputStream.close();
-//      }
-//    }
-//    return transferredBytes;
-//  }
 }

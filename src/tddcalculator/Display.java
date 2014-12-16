@@ -7,5 +7,5 @@ public interface Display {
   void displayText(String text);
 
 
-//  String getText();
+
 }

@@ -60,7 +60,7 @@ public class Server {
               writer.flush();
 
               serverMessageListener.newClientWasConnected(serverMessage.sendMessage());
-//              clientSocket.close();
+              clientSocket.close();
             } catch (IOException e) {
               e.printStackTrace();
             }
