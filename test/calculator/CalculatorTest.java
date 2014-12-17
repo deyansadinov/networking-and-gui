@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
 
 /**
  * @author Deyan Sadinov <sadinov88@gmail.com>
@@ -48,7 +47,7 @@ public class CalculatorTest {
 
     context.checking(new Expectations() {{
 
-      oneOf(display).displayText("5");
+      oneOf(display).text("5");
 
     }});
 
@@ -60,7 +59,7 @@ public class CalculatorTest {
 
     context.checking(new Expectations() {{
 
-      oneOf(display).displayText("8");
+      oneOf(display).text("8");
     }});
 
     calculator.onNumberPressed(8);
@@ -70,8 +69,8 @@ public class CalculatorTest {
   public void pressTwoNumbers() {
     context.checking(new Expectations() {{
 
-      oneOf(display).displayText("8");
-      oneOf(display).displayText("84");
+      oneOf(display).text("8");
+      oneOf(display).text("84");
     }});
 
     calculator.onNumberPressed(8);
@@ -82,8 +81,8 @@ public class CalculatorTest {
   @Test
   public void operatorAfterNumber() {
     context.checking(new Expectations() {{
-      oneOf(display).displayText("10");
-      oneOf(display).displayText("10+");
+      oneOf(display).text("10");
+      oneOf(display).text("10+");
     }});
     calculator.onNumberPressed(10);
     calculator.onOperationPressed("+");
@@ -93,9 +92,9 @@ public class CalculatorTest {
   @Test
   public void operatorAfterOperator() {
     context.checking(new Expectations() {{
-      oneOf(display).displayText("10");
-      oneOf(display).displayText("10+");
-      never(display).displayText("-");
+      oneOf(display).text("10");
+      oneOf(display).text("10+");
+      never(display).text("-");
     }});
     calculator.onNumberPressed(10);
     calculator.onOperationPressed("+");
@@ -105,17 +104,15 @@ public class CalculatorTest {
   @Test
   public void expressionStartWithOperator() {
     context.checking(new Expectations() {{
-      never(display).displayText("+");
+      never(display).text("+");
     }});
-
-//    calculator.onOperationPressed("+");
 
   }
 
   @Test
   public void expressionStartWithPoint() {
     context.checking(new Expectations() {{
-      never(display).displayText(".");
+      never(display).text(".");
     }});
 
     calculator.onPointPressed();
@@ -126,9 +123,9 @@ public class CalculatorTest {
   public void numberAfterPoint() {
 
     context.checking(new Expectations() {{
-      oneOf(display).displayText("2");
-      oneOf(display).displayText("2.");
-      oneOf(display).displayText("2.3");
+      oneOf(display).text("2");
+      oneOf(display).text("2.");
+      oneOf(display).text("2.3");
     }});
 
     calculator.onNumberPressed(2);
@@ -139,11 +136,11 @@ public class CalculatorTest {
   @Test
   public void backspace() {
     context.checking(new Expectations() {{
-      oneOf(display).displayText("2");
-      oneOf(display).displayText("23");
-      oneOf(display).displayText("2");
-      oneOf(display).displayText("24");
-      oneOf(display).displayText("2");
+      oneOf(display).text("2");
+      oneOf(display).text("23");
+      oneOf(display).text("2");
+      oneOf(display).text("24");
+      oneOf(display).text("2");
     }});
 
     calculator.onNumberPressed(2);
@@ -156,10 +153,10 @@ public class CalculatorTest {
   @Test
   public void calculateExpression() {
     context.checking(new Expectations() {{
-      oneOf(display).displayText("10");
-      oneOf(display).displayText("10+");
-      oneOf(display).displayText("10+3");
-      oneOf(display).displayText("13.0");
+      oneOf(display).text("10");
+      oneOf(display).text("10+");
+      oneOf(display).text("10+3");
+      oneOf(display).text("13.0");
 
     }});
 
@@ -172,9 +169,9 @@ public class CalculatorTest {
   @Test
   public void pointAfterOperator() {
     context.checking(new Expectations() {{
-      oneOf(display).displayText("10");
-      oneOf(display).displayText("10+");
-      never(display).displayText("10+.");
+      oneOf(display).text("10");
+      oneOf(display).text("10+");
+      never(display).text("10+.");
     }});
     calculator.onNumberPressed(10);
     calculator.onOperationPressed("+");
@@ -185,9 +182,9 @@ public class CalculatorTest {
   public void operationAfterPoint(){
 
       context.checking(new Expectations(){{
-        oneOf(display).displayText("10");
-        oneOf(display).displayText("10.");
-        never(display).displayText("10.+");
+        oneOf(display).text("10");
+        oneOf(display).text("10.");
+        never(display).text("10.+");
       }});
 
     calculator.onNumberPressed(10);
@@ -200,14 +197,14 @@ public class CalculatorTest {
   public void calculateExpressionWithTwoPointsInIt() {
 
     context.checking(new Expectations(){{
-      oneOf(display).displayText("1");
-      oneOf(display).displayText("1.");
-      oneOf(display).displayText("1.2");
-      oneOf(display).displayText("1.2+");
-      oneOf(display).displayText("1.2+2");
-      oneOf(display).displayText("1.2+2.");
-      oneOf(display).displayText("1.2+2.8");
-      oneOf(display).displayText("4.0");
+      oneOf(display).text("1");
+      oneOf(display).text("1.");
+      oneOf(display).text("1.2");
+      oneOf(display).text("1.2+");
+      oneOf(display).text("1.2+2");
+      oneOf(display).text("1.2+2.");
+      oneOf(display).text("1.2+2.8");
+      oneOf(display).text("4.0");
     }});
 
     calculator.onNumberPressed(1);
@@ -224,10 +221,10 @@ public class CalculatorTest {
   public void twoPointsInOneNumber() {
 
     context.checking(new Expectations(){{
-      oneOf(display).displayText("10");
-      oneOf(display).displayText("10.");
-      oneOf(display).displayText("10.3");
-      never(display).displayText("10.3.");
+      oneOf(display).text("10");
+      oneOf(display).text("10.");
+      oneOf(display).text("10.3");
+      never(display).text("10.3.");
     }});
 
     calculator.onNumberPressed(10);
@@ -240,40 +237,14 @@ public class CalculatorTest {
   public void pointAfterPoint() {
 
     context.checking(new Expectations(){{
-      oneOf(display).displayText("10");
-      oneOf(display).displayText("10.");
-      never(display).displayText("10..");
+      oneOf(display).text("10");
+      oneOf(display).text("10.");
+      never(display).text("10..");
     }});
 
     calculator.onNumberPressed(10);
     calculator.onPointPressed();
     calculator.onPointPressed();
   }
-
-//  @Test
-//  public void evaluateNotNegativeResult() {
-//
-//    context.checking(new Expectations() {{
-//      oneOf(display).getText();
-//      oneOf(display).displayText("3");
-//
-//      oneOf(display).getText();
-//      oneOf(display).displayText("-");
-//
-//      oneOf(display).getText();
-//      oneOf(display).displayText("1");
-//
-////      oneOf(display).displayText("2");
-////      oneOf(display).getText();
-//
-//    }});
-//
-//    calculator.onNumberPressed("3");
-//    calculator.onOperationPressed("-");
-//    calculator.onNumberPressed("1");
-//    calculator.onEvaluate();
-//
-//
-//  }
 
 }

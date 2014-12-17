@@ -1,7 +1,5 @@
 package tddcalculator;
 
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -29,15 +27,13 @@ public class Calculator implements CalculatorListener {
   public void onNumberPressed(Integer symbol) {
 
     currentDisplay += symbol;
-    display.displayText(currentDisplay);
+    display.text(currentDisplay);
   }
 
   @Override
   public void onOperationPressed(String operation) {
     if (!operators.containsKey(operation)) {
       return;
-    }
-    if (!isOperation(currentDisplay)) {
     }
 
     if (currentDisplay.endsWith(".")) {
@@ -50,13 +46,8 @@ public class Calculator implements CalculatorListener {
       }
     }
 
-
-
-
     currentDisplay += operation;
-    display.displayText(currentDisplay);
-
-
+    display.text(currentDisplay);
 
   }
 
@@ -68,17 +59,17 @@ public class Calculator implements CalculatorListener {
     try {
       result = (Double) eng.eval(currentDisplay);
       currentDisplay = String.valueOf(result);
-      display.displayText(currentDisplay);
+      display.text(currentDisplay);
     } catch (ScriptException e) {
       e.printStackTrace();
     }
   }
 
   @Override
-  public void onDeletePressed() {
+  public void onClearPressed() {
     pointFlag = false;
     currentDisplay = "";
-    display.displayText(currentDisplay);
+    display.text(currentDisplay);
   }
 
   @Override
@@ -97,7 +88,7 @@ public class Calculator implements CalculatorListener {
         pointFlag = true;
       }
     }
-    display.displayText(currentDisplay);
+    display.text(currentDisplay);
   }
 
   private boolean isOperation(String operator) {
@@ -136,7 +127,7 @@ public class Calculator implements CalculatorListener {
     if (count >= 1) return;
     currentDisplay += point;
 
-    display.displayText(currentDisplay);
+    display.text(currentDisplay);
 
 
   }

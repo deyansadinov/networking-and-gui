@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
  */
 public class DownloadAgentUI extends JFrame implements ProgressListener {
 
-  private Thread threadDownload;
+  private Thread downloadThread;
   private JProgressBar progressBar;
   private JButton cancelButton;
   private DownloadAgent downloadAgent;
@@ -62,10 +62,10 @@ public class DownloadAgentUI extends JFrame implements ProgressListener {
           }
         });
 
-        threadDownload = new ThreadDownload(downloadAgent, filePath.getText(), pageAddress.getText());
+        downloadThread = new DownloadThread(downloadAgent, filePath.getText(), pageAddress.getText());
 
         downloadAgent.isInterrupted(false);
-        threadDownload.start();
+        downloadThread.start();
       }
     };
     download.addActionListener(downloadListener);
@@ -77,7 +77,7 @@ public class DownloadAgentUI extends JFrame implements ProgressListener {
       @Override
       public void actionPerformed(ActionEvent e) {
         Toolkit.getDefaultToolkit().beep();
-        threadDownload.interrupt();
+        downloadThread.interrupt();
         downloadAgent.isInterrupted(true);
 
         pageAddress.setEditable(true);

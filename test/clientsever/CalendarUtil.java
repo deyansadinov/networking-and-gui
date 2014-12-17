@@ -9,11 +9,10 @@ import java.util.Date;
  */
 public class CalendarUtil  {
 
-  public Date date(int year,int month,int day){
+  public  static Date january(int year, int day){
     Calendar calendar = Calendar.getInstance();
 
     calendar.set(Calendar.YEAR,year);
-    calendar.set(Calendar.MONTH,month);
     calendar.set(Calendar.DAY_OF_MONTH,day);
 
     return calendar.getTime();

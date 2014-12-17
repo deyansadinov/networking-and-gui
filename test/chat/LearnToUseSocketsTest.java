@@ -17,7 +17,7 @@ import java.util.Scanner;
 /**
  * Created by clouway on 14-12-10.
  */
-public class LearnSocketsTest {
+public class LearnToUseSocketsTest {
 
   interface ConnectionListener<T> {
     void onClientConnect(T client);

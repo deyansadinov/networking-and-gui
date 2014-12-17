@@ -10,16 +10,16 @@ import java.util.Scanner;
 public class Client {
 
   private final ClientMessageListener clientMessageListener;
-  private final UserMessage userMessage;
+  private final UserMessages userMessages;
   private final int port;
   private StringBuilder builder = new StringBuilder();
   private Socket clientSocket;
 
 
 
-  public Client(ClientMessageListener clientMessageListener, UserMessage userMessage, int port) {
+  public Client(ClientMessageListener clientMessageListener, UserMessages userMessages, int port) {
     this.clientMessageListener = clientMessageListener;
-    this.userMessage = userMessage;
+    this.userMessages = userMessages;
     this.port = port;
   }
 
@@ -31,7 +31,7 @@ public class Client {
         public void run() {
 
           try {
-            clientMessageListener.onNewMessageReceive(userMessage.connectClient());
+            clientMessageListener.onNewMessageReceive(userMessages.connectClient());
 
             InputStream stream = clientSocket.getInputStream();
 
@@ -62,7 +62,12 @@ public class Client {
     }
   }
 
-  public String getResponse() {
+  public String getResponse(){
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     return builder.toString();
   }
 

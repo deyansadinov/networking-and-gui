@@ -11,7 +11,7 @@ public interface CalculatorListener {
 
   void onEvaluate();
 
-  void onDeletePressed();
+  void onClearPressed();
 
   void onBackspacePressed();
 

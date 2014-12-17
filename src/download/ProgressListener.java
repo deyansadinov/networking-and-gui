@@ -5,5 +5,6 @@ package download;
  */
 public interface ProgressListener {
 
+  //updating the progress bar
   void onProgressWasUpdate(int savedBytes);
 }

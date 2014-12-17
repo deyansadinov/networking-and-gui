@@ -5,13 +5,10 @@ import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import serverclient.Client;
-import serverclient.ClientMessageListener;
-import serverclient.Server;
-import serverclient.UserMessage;
+import serverclient.UserMessages;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
@@ -30,14 +27,14 @@ public class ClientTest {
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
     setThreadingPolicy(new Synchroniser());
   }};
-  final UserMessage userMessage = context.mock(UserMessage.class);
+  final UserMessages userMessages = context.mock(UserMessages.class);
 
   @Before
   public void setUp() {
     int port = 4444;
     clientMessageListener = new MockClientMessageListener();
     fakeServer = new FakeServer(port, "Hello 2014-12-15");
-    client = new Client(clientMessageListener, userMessage, port);
+    client = new Client(clientMessageListener, userMessages, port);
   }
 
 
@@ -45,7 +42,7 @@ public class ClientTest {
   public void clientReceiveWhatWasSendFromServer() throws InterruptedException {
 
     context.checking(new Expectations() {{
-      ignoring(userMessage);
+      ignoring(userMessages);
     }});
 
     new Thread(new Runnable() {
@@ -57,7 +54,6 @@ public class ClientTest {
 
     client.connect("localhost");
 
-    Thread.sleep(10);
 
     String response = client.getResponse();
 
@@ -65,14 +61,13 @@ public class ClientTest {
 
     fakeServer.stop();
 
-//    client.disconnect();
   }
 
   @Test
   public void newClientWasConnected() {
 
     context.checking(new Expectations() {{
-      oneOf(userMessage).connectClient();
+      oneOf(userMessages).connectClient();
       will(returnValue("Client is connected to Server on 4444 port"));
     }});
 

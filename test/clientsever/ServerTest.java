@@ -9,16 +9,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import serverclient.Clock;
 import serverclient.Server;
-import serverclient.ServerMessage;
+import serverclient.ServerMessages;
 
 
-import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.Date;
 import java.util.Scanner;
 
+import static clientsever.CalendarUtil.january;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -27,28 +27,31 @@ import static org.junit.Assert.*;
  * @author Deyan Sadinov <sadinov88@gmail.com>
  */
 public class ServerTest {
-
+  private Socket clientSocket;
   private Server server;
   private MockServerMessageListener serverMessageListener;
+  private int port = 4444;
+  private String host = "localhost";
 
   Clock clock = new Clock() {
     @Override
     public Date now() {
-      CalendarUtil calendar = new CalendarUtil();
-      return calendar.date(2014, 12, 15);
+      return january(2015, 5);
     }
   };
+
   @Rule
   public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setThreadingPolicy(new Synchroniser());
   }};
 
-  ServerMessage serverMessage = context.mock(ServerMessage.class);
+  ServerMessages serverMessages = context.mock(ServerMessages.class);
 
   @Before
   public void setUp() {
     serverMessageListener = new MockServerMessageListener();
-    server = new Server(serverMessageListener, serverMessage, clock, 4444);
+    server = new Server(serverMessageListener, serverMessages, clock);
+
   }
 
   @Test
@@ -56,21 +59,21 @@ public class ServerTest {
 
 
     context.checking(new Expectations() {{
-      oneOf(serverMessage).startServer();
-      oneOf(serverMessage).acceptServer();
-      oneOf(serverMessage).sayHello();
+      oneOf(serverMessages).startServer();
+      oneOf(serverMessages).acceptServer();
+      oneOf(serverMessages).sayHello();
       will(returnValue("Hello"));
 
-      oneOf(serverMessage).sendMessage();
+      oneOf(serverMessages).sendMessage();
     }});
 
-    server.startServer();
+    server.startServer(port);
 
-    Socket clientSocket = new Socket("localhost", 4444);
+     clientSocket = new Socket(host, port);
 
     String contentResponse = getContent(clientSocket);
 
-    assertThat(contentResponse, is("Hello15-01-15"));
+    assertThat(contentResponse, is("Hello 15-05"));
 
     clientSocket.close();
 
@@ -81,26 +84,27 @@ public class ServerTest {
   @Test
   public void newClientWasConnected() throws IOException {
 
-    context.checking(new Expectations(){{
-      oneOf(serverMessage).startServer();
-      will(returnValue("Server starting on port 4444 and listener for required"));
+    context.checking(new Expectations() {
+      {
+        oneOf(serverMessages).startServer();
+        will(returnValue("Server starting on port 4444 and listener for required"));
 
-      oneOf(serverMessage).acceptServer();
-      will(returnValue("Server accept new client"));
+        oneOf(serverMessages).acceptServer();
+        will(returnValue("Server accept new client"));
 
-      oneOf(serverMessage).sayHello();
+        oneOf(serverMessages).sayHello();
 
-      oneOf(serverMessage).sendMessage();
-      will(returnValue("Server send message to client"));
-    }
+        oneOf(serverMessages).sendMessage();
+        will(returnValue("Server send message to client"));
+      }
     });
 
-    server.startServer();
+    server.startServer(port);
 
-    Socket clientSocket = new Socket("localhost",4444);
+     clientSocket = new Socket(host, port);
 
-    assertThat(serverMessageListener.listMessages,hasItems("Server starting on port 4444 and listener for required","Server accept new client"
-            ,"Server send message to client"));
+    assertThat(serverMessageListener.listMessages, hasItems("Server starting on port 4444 and listener for required", "Server accept new client"
+            , "Server send message to client"));
 
     clientSocket.close();
 

@@ -30,7 +30,7 @@ public class FakeServer {
       e.printStackTrace();
     }
     while (true) {
-      Socket clientSocket = null;
+      Socket clientSocket ;
       try {
         clientSocket = serverSocket.accept();
         OutputStream outputStream = clientSocket.getOutputStream();
@@ -42,8 +42,6 @@ public class FakeServer {
       } catch (IOException e) {
         e.printStackTrace();
       }
-//        outputStream.write(message.getBytes());
-//        outputStream.flush();
     }
 
   }

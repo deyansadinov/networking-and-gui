@@ -14,28 +14,19 @@ import java.net.URLConnection;
  */
 public class DownloadAgent {
 
-
   private ProgressListener progressListener;
-
   private int downloadedBytes;
-
   private long fileSize;
-
-
   private byte[] buff = new byte[1024];
   private boolean interrupted = false;
 
   public void isInterrupted(boolean interrupted) {
-
     this.interrupted = interrupted;
   }
 
-
   public DownloadAgent(ProgressListener progressListener) {
-
     this.progressListener = progressListener;
   }
-
 
   public int downloadStart(String filePath, String pageAddress) throws URISyntaxException {
 
@@ -43,16 +34,12 @@ public class DownloadAgent {
     OutputStreamWriter writer = null;
 
     try {
-
       if (pageAddress.equals("") || filePath.equals("")) {
         return 0;
       }
 
       URL address = new URI(pageAddress).toURL();
       URLConnection connection = address.openConnection();
-
-
-
 
       InputStream inputStream = address.openStream();
       InputStreamReader input = new InputStreamReader(inputStream);
@@ -63,9 +50,6 @@ public class DownloadAgent {
 
       fileSize = connection.getContentLengthLong();
       downloadedBytes = transfer(inputStream, outputStream, -1, 0);
-
-
-
 
     } catch (MalformedURLException e) {
       e.printStackTrace();
@@ -115,18 +99,14 @@ public class DownloadAgent {
           break;
         }
 
-
         System.out.println(downloadedBytes);
         int readBytes;
         if ((readBytes = in.read(buff, 0, buff.length)) != -1) {
           out.write(buff, 0, readBytes);
-          System.out.println("percents : " + calculatePercentTransferred(downloadedBytes));
           progressListener.onProgressWasUpdate(calculatePercentTransferred(downloadedBytes));
           downloadedBytes += readBytes;
-
           out.flush();
         } else {
-          System.out.println("percents : " + calculatePercentTransferred(downloadedBytes));
           progressListener.onProgressWasUpdate(calculatePercentTransferred(downloadedBytes));
           interrupted = true;
           in.close();
@@ -139,9 +119,11 @@ public class DownloadAgent {
     return downloadedBytes;
   }
 
-
   private int calculatePercentTransferred(int bytesTransferred) {
     return (int) (100 * bytesTransferred / fileSize);
   }
 
+  public void cancelDownload() {
+    this.isInterrupted(true);
+  }
 }

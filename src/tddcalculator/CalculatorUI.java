@@ -56,7 +56,7 @@ public class CalculatorUI extends JFrame implements Display {
         if (Character.isDigit(text)) {
           calculatorListener.onNumberPressed(Integer.valueOf(text));
         }else if (Character.isLetter(text)){
-          calculatorListener.onDeletePressed();
+          calculatorListener.onClearPressed();
         }else if ( text == '<' ){
           calculatorListener.onBackspacePressed();
         }else if (text == '='){
@@ -75,7 +75,7 @@ public class CalculatorUI extends JFrame implements Display {
 
 
   @Override
-  public void displayText(String text) {
+  public void text(String text) {
     currentDisplay=text;
     jTextField.setText(currentDisplay);
   }

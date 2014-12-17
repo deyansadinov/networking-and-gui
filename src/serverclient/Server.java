@@ -16,51 +16,48 @@ import java.text.SimpleDateFormat;
 public class Server {
 
   private final ServerMessageListener serverMessageListener;
-  private ServerMessage serverMessage;
+  private ServerMessages serverMessages;
   private final Clock clock;
-  private final int port;
+  private int port;
   public ServerSocket serverSocket;
-  private static final DateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
-  public Socket clientSocket;
+  private static final DateFormat dateFormat = new SimpleDateFormat("yy-dd");
   public OutputStream outputStream;
   private PrintWriter writer;
-  private Boolean isStarted = false;
+  private Boolean started = false;
 
-  public  Server(ServerMessageListener serverMessageListener, ServerMessage serverMessage, Clock clock, int port) {
+  public Server(ServerMessageListener serverMessageListener, ServerMessages serverMessages, Clock clock) {
     this.serverMessageListener = serverMessageListener;
-    this.serverMessage = serverMessage;
+    this.serverMessages = serverMessages;
     this.clock = clock;
-    this.port = port;
   }
 
-
-
-  public void startServer() {
-    isStarted = true;
+  public void startServer(int port) {
+    this.port = port;
+    started = true;
     try {
       serverSocket = new ServerSocket(port);
-      serverMessageListener.newClientWasConnected(serverMessage.startServer());
+      serverMessageListener.newClientWasConnected(serverMessages.startServer());
       new Thread(new Runnable() {
         @Override
         public void run() {
-          while (isStarted) {
+          while (started) {
             try {
-              clientSocket = serverSocket.accept();
+              Socket clientSocket = serverSocket.accept();
 
-              serverMessageListener.newClientWasConnected(serverMessage.acceptServer());
+              serverMessageListener.newClientWasConnected(serverMessages.acceptServer());
 
               outputStream = clientSocket.getOutputStream();
 
               writer = new PrintWriter(new BufferedOutputStream(outputStream));
 
-              String message = serverMessage.sayHello() + dateFormat.format(clock.now()) + "\n";
+              String message = serverMessages.sayHello() + " " + dateFormat.format(clock.now()) + "\n";
               System.out.println("message is : " + message);
 
               writer.println(message);
               writer.flush();
 
-              serverMessageListener.newClientWasConnected(serverMessage.sendMessage());
-              clientSocket.close();
+              serverMessageListener.newClientWasConnected(serverMessages.sendMessage());
+
             } catch (IOException e) {
               e.printStackTrace();
             }
@@ -75,7 +72,7 @@ public class Server {
     if (serverSocket != null) {
       writer.println("\nServer Disconnected\n");
       writer.flush();
-      isStarted = false;
+      started = false;
       Thread.interrupted();
     }
   }
