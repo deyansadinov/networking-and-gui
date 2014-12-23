@@ -22,6 +22,8 @@ public class ClientTest {
   private FakeServer fakeServer;
   private Client client;
   private MockClientMessageListener clientMessageListener;
+  private int port = 4444;
+  private String host = "localhost";
 
 
   public JUnitRuleMockery context = new JUnitRuleMockery(){{
@@ -31,10 +33,10 @@ public class ClientTest {
 
   @Before
   public void setUp() {
-    int port = 4444;
+//    int port = 4444;
     clientMessageListener = new MockClientMessageListener();
     fakeServer = new FakeServer(port, "Hello 2014-12-15");
-    client = new Client(clientMessageListener, userMessages, port);
+    client = new Client(clientMessageListener, userMessages);
   }
 
 
@@ -45,14 +47,14 @@ public class ClientTest {
       ignoring(userMessages);
     }});
 
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        fakeServer.startServer();
-      }
-    }).start();
-
-    client.connect("localhost");
+//    new Thread(new Runnable() {
+//      @Override
+//      public void run() {
+//        fakeServer.startServer();
+//      }
+//    }).start();
+    fakeServer.startServer();
+    client.connect(host,port);
 
 
     String response = client.getResponse();
@@ -78,7 +80,7 @@ public class ClientTest {
       }
     }).start();
 
-    client.connect("localhost");
+    client.connect(host,port);
 
     assertThat(clientMessageListener.listMessage, hasItems("Client is connected to Server on 4444 port"));
 

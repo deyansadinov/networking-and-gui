@@ -11,19 +11,18 @@ public class Client {
 
   private final ClientMessageListener clientMessageListener;
   private final UserMessages userMessages;
-  private final int port;
   private StringBuilder builder = new StringBuilder();
   private Socket clientSocket;
 
 
 
-  public Client(ClientMessageListener clientMessageListener, UserMessages userMessages, int port) {
+  public Client(ClientMessageListener clientMessageListener, UserMessages userMessages) {
     this.clientMessageListener = clientMessageListener;
     this.userMessages = userMessages;
-    this.port = port;
+
   }
 
-  public void connect(String host) {
+  public void connect(String host, int port) {
     try {
       clientSocket = new Socket(host, port);
       new Thread(new Runnable() {

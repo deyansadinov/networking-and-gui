@@ -10,9 +10,9 @@ public class ClientMain {
 
     UserMessages message = new UseMessages();
 
-    Client client = new Client(clientView,message,4444);
+    Client client = new Client(clientView,message);
 
-    client.connect("localhost");
+    client.connect("localhost",4444);
 
   }
 }

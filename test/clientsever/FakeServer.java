@@ -23,26 +23,31 @@ public class FakeServer {
   }
 
   public void startServer() {
-
-    try {
-      serverSocket = new ServerSocket(port);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    while (true) {
-      Socket clientSocket ;
-      try {
-        clientSocket = serverSocket.accept();
-        OutputStream outputStream = clientSocket.getOutputStream();
-        PrintWriter out = new PrintWriter(new BufferedOutputStream(outputStream));
-        out.println(message);
-        out.flush();
-      } catch (SocketException se) {
-        break;
-      } catch (IOException e) {
-        e.printStackTrace();
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        while (true) {
+          Socket clientSocket ;
+          try {
+            clientSocket = serverSocket.accept();
+            OutputStream outputStream = clientSocket.getOutputStream();
+            PrintWriter out = new PrintWriter(new BufferedOutputStream(outputStream));
+            out.println(message);
+            out.flush();
+          } catch (SocketException se) {
+            break;
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
       }
-    }
+    }).start();
+
 
   }
 
