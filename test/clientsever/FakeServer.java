@@ -1,5 +1,7 @@
 package clientsever;
 
+import serverclient.Clock;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
 
 /**
  * @author Deyan Sadinov <sadinov88@gmail.com>
@@ -14,12 +17,15 @@ import java.net.SocketException;
 public class FakeServer {
 
   private final int port;
-  private final String message;
+//  private final String message;
   private ServerSocket serverSocket;
+  private Clock clock;
+  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-  public FakeServer(int port, String message) {
+  public FakeServer(int port,Clock clock) {
     this.port = port;
-    this.message = message;
+
+    this.clock = clock;
   }
 
   public void startServer() {
@@ -37,7 +43,8 @@ public class FakeServer {
             clientSocket = serverSocket.accept();
             OutputStream outputStream = clientSocket.getOutputStream();
             PrintWriter out = new PrintWriter(new BufferedOutputStream(outputStream));
-            out.println(message);
+            out.println("Hello " + dateFormat.format(clock.date()));
+//            out.println(message);
             out.flush();
           } catch (SocketException se) {
             break;

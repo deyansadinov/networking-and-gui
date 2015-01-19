@@ -11,31 +11,42 @@ import java.util.List;
  */
 public class ClientSocketThread extends Thread {
   private final List<Socket> listClients;
+  private final Socket clientSocket;
   private final ServerMessages serverMessages;
   private final int countClients;
+  private PrintWriter writer;
 
 
-
-  public ClientSocketThread(List<Socket> listClients, ServerMessages serverMessages, int countClients) {
+  public ClientSocketThread(List<Socket> listClients, Socket clientSocket, ServerMessages serverMessages, int countClients) {
     this.listClients = listClients;
+    this.clientSocket = clientSocket;
     this.serverMessages = serverMessages;
     this.countClients = countClients;
   }
 
   @Override
   public void run() {
-    if (listClients.size() > 1) {
-      for (Socket socket : listClients) {
-        try {
-          PrintWriter writer = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
-          writer.println(serverMessages.sendMessageToAllClients(countClients));
-          writer.flush();
-        } catch (IOException e) {
-          e.printStackTrace();
+    try {
+      writer = new PrintWriter(clientSocket.getOutputStream(), true);
+      writer.println(serverMessages.sendFirstMessageToClient(countClients));
+
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          for (Socket client : listClients) {
+            try {
+              writer = new PrintWriter(client.getOutputStream(), true);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+            writer.println(serverMessages.sendMessageToAllClients(countClients));
+            writer.flush();
+          }
+          listClients.add(clientSocket);
         }
-      }
+      }).start();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-
-
   }
 }

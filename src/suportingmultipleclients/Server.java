@@ -10,6 +10,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -26,6 +28,7 @@ public class Server {
   private PrintWriter writer;
   private Boolean running = false;
 
+
   public Server(ServerMessages serverMessages, ServerMessageListener serverMessageListener) {
     this.serverMessages = serverMessages;
     this.serverMessageListener = serverMessageListener;
@@ -34,28 +37,43 @@ public class Server {
   public void start(int port) {
     try {
       serverSocket = new ServerSocket(port);
-      serverMessageListener.newClientWasConnected(serverMessages.startServer());
+//      serverMessageListener.newClientWasConnected(serverMessages.startServer());
       running = true;
       new Thread(new Runnable() {
         @Override
         public void run() {
+          System.out.println("In thread");
           while (running) {
             try {
               clientSocket = serverSocket.accept();
               serverMessageListener.newClientWasConnected(serverMessages.connectNewClient(countClients));
-              listClients.add(clientSocket);
+//
+//              OutputStream outputStream = clientSocket.getOutputStream();
+//
+//              writer = new PrintWriter(new BufferedOutputStream(outputStream));
+//
+//              writer.println(serverMessages.sendFirstMessageToClient(countClients));
+//
+//              writer.flush();
 
-              ClientSocketThread clientSocketThread = new ClientSocketThread(listClients, serverMessages, countClients);
+
+
+              ClientSocketThread clientSocketThread = new ClientSocketThread(listClients, clientSocket, serverMessages, countClients);
               clientSocketThread.start();
-
-              for (Socket socket : listClients) {
-                writer = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-                writer.println(serverMessages.sendFirstMessageToClient(countClients));
-                writer.println(serverMessages.sendMessageToAllClients(countClients));
-                writer.flush();
+              try {
+                Thread.sleep(200);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
               }
+              countClients();
 
-                countClients();
+//              for (Socket socket : listClients) {
+//                writer = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
+//                writer.println(serverMessages.sendFirstMessageToClient(countClients));
+//                writer.println(serverMessages.sendMessageToAllClients(countClients));
+//                writer.flush();
+//              }
+
 
             } catch (IOException e) {
             }
@@ -87,11 +105,16 @@ public class Server {
 
 
   public void stop() {
+    try {
+      Thread.sleep(200);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     running = false;
     for (Socket socket : listClients) {
       try {
         writer = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-        writer.println("Server Disconnect" );
+        writer.println("Server Disconnect");
         writer.flush();
         serverSocket.close();
       } catch (IOException e) {
@@ -100,5 +123,6 @@ public class Server {
     }
   }
 }
+
 
 

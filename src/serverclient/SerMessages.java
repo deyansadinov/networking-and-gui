@@ -23,4 +23,6 @@ public class SerMessages implements ServerMessages {
   public String sendMessage() {
     return "Server send message to client";
   }
+
+
 }

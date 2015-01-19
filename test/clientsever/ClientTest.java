@@ -8,6 +8,7 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Before;
 import org.junit.Test;
 import serverclient.Client;
+import serverclient.Clock;
 import serverclient.UserMessages;
 
 import static org.hamcrest.Matchers.hasItems;
@@ -22,20 +23,21 @@ public class ClientTest {
   private FakeServer fakeServer;
   private Client client;
   private MockClientMessageListener clientMessageListener;
+
   private int port = 4444;
   private String host = "localhost";
 
 
-  public JUnitRuleMockery context = new JUnitRuleMockery(){{
+  public JUnitRuleMockery context = new JUnitRuleMockery() {{
     setThreadingPolicy(new Synchroniser());
   }};
   final UserMessages userMessages = context.mock(UserMessages.class);
+  final Clock clock = context.mock(Clock.class);
 
   @Before
   public void setUp() {
-//    int port = 4444;
     clientMessageListener = new MockClientMessageListener();
-    fakeServer = new FakeServer(port, "Hello 2014-12-15");
+    fakeServer = new FakeServer(port, clock);
     client = new Client(clientMessageListener, userMessages);
   }
 
@@ -45,21 +47,16 @@ public class ClientTest {
 
     context.checking(new Expectations() {{
       ignoring(userMessages);
+      oneOf(clock).date();
+      will(returnValue(CalendarUtil.january(2014,15)));
     }});
 
-//    new Thread(new Runnable() {
-//      @Override
-//      public void run() {
-//        fakeServer.startServer();
-//      }
-//    }).start();
     fakeServer.startServer();
-    client.connect(host,port);
-
+    client.connect(host, port);
 
     String response = client.getResponse();
 
-    assertThat(response, is("Hello 2014-12-15"));
+    assertThat(response, is("Hello 2014-01-15"));
 
     fakeServer.stop();
 
@@ -71,16 +68,12 @@ public class ClientTest {
     context.checking(new Expectations() {{
       oneOf(userMessages).connectClient();
       will(returnValue("Client is connected to Server on 4444 port"));
+      oneOf(clock).date();
+      will(returnValue(CalendarUtil.january(2014,15)));
     }});
 
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        fakeServer.startServer();
-      }
-    }).start();
-
-    client.connect(host,port);
+    fakeServer.startServer();
+    client.connect(host, port);
 
     assertThat(clientMessageListener.listMessage, hasItems("Client is connected to Server on 4444 port"));
 

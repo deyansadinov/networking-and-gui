@@ -13,7 +13,7 @@ public class ServerEntryPoint {
 
     Clock clock = new Clock() {
       @Override
-      public Date now() {
+      public Date date() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTime();
       }
@@ -41,6 +41,7 @@ public class ServerEntryPoint {
       public String sendMessage() {
         return "Server send message to client";
       }
+
     };
 
     Server server = new Server(view, serverMessages,clock);

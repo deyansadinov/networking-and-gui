@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -18,11 +19,9 @@ public class Server {
   private final ServerMessageListener serverMessageListener;
   private ServerMessages serverMessages;
   private final Clock clock;
-  private int port;
   public ServerSocket serverSocket;
-  private static final DateFormat dateFormat = new SimpleDateFormat("yy-dd");
+  private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
   public OutputStream outputStream;
-  private PrintWriter writer;
   private Boolean started = false;
 
   public Server(ServerMessageListener serverMessageListener, ServerMessages serverMessages, Clock clock) {
@@ -32,12 +31,13 @@ public class Server {
   }
 
   public void startServer(int port) {
-    this.port = port;
     started = true;
     try {
       serverSocket = new ServerSocket(port);
       serverMessageListener.newClientWasConnected(serverMessages.startServer());
       new Thread(new Runnable() {
+
+        PrintWriter writer;
         @Override
         public void run() {
           while (started) {
@@ -50,29 +50,38 @@ public class Server {
 
               writer = new PrintWriter(new BufferedOutputStream(outputStream));
 
-              String message = serverMessages.sayHello() + " " + dateFormat.format(clock.now()) + "\n";
-              System.out.println("message is : " + message);
+              String message = serverMessages.sayHello() + " " + dateFormat.format(clock.date()) + "\n";
+
 
               writer.println(message);
               writer.flush();
 
               serverMessageListener.newClientWasConnected(serverMessages.sendMessage());
 
+            } catch (SocketException se) {
+
+              break;
             } catch (IOException e) {
               e.printStackTrace();
             }
           }
+          writer.println("\nServer Disconnected\n");
+          writer.flush();
         }
       }).start();
     } catch (IOException e) {
+
     }
   }
 
   public void stopServer() {
     if (serverSocket != null) {
-      writer.println("\nServer Disconnected\n");
-      writer.flush();
       started = false;
+      try {
+        serverSocket.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
       Thread.interrupted();
     }
   }

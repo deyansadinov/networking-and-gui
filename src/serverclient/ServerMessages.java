@@ -12,4 +12,6 @@ public interface ServerMessages {
   String sayHello();
 
   String sendMessage();
+
+
 }

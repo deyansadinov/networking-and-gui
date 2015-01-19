@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 /**
  * @author Deyan Sadinov <sadinov88@gmail.com>
  */
-public class ClientView extends JFrame implements ClientMessageListener {
+public class ClientView extends JFrame implements Screen {
 
 
   private DefaultListModel<String> list = new DefaultListModel<String>();
@@ -50,9 +50,10 @@ public class ClientView extends JFrame implements ClientMessageListener {
     });
   }
 
-  @Override
-  public void onResponseWasReceived(String message) {
 
-    list.addElement(message + "\n");
+
+  @Override
+  public void display(String text) {
+    list.addElement(text);
   }
 }

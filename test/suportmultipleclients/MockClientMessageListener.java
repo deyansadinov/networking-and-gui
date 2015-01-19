@@ -1,6 +1,6 @@
-package clientsever;
+package suportmultipleclients;
 
-import serverclient.ServerMessageListener;
+import suportingmultipleclients.ClientMessageListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +8,12 @@ import java.util.List;
 /**
  * @author Deyan Sadinov <sadinov88@gmail.com>
  */
-public class MockServerMessageListener implements ServerMessageListener {
+public class MockClientMessageListener implements ClientMessageListener {
 
   public List<String> listMessages = new ArrayList<String>();
 
-
   @Override
-  public void newClientWasConnected(String message) {
+  public void onResponseWasReceived(String message) {
     listMessages.add(message);
   }
-
 }
